@@ -1,21 +1,25 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UserManagementAPI.Models  // Đảm bảo namespace đúng
+namespace UserManagementAPI.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        [Key]
+        public int Id { get; init; }
 
-        [Required, MaxLength(50)]
+        [Required]
+        [MaxLength(50)]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required, MaxLength(50)]
+        [Required]
+        [MaxLength(50)]
         public string LastName { get; set; } = string.Empty;
 
-        [Required, EmailAddress, MaxLength(100)]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Phone, MaxLength(15)]
+        [Phone]
         public string? PhoneNumber { get; set; }
 
         [MaxLength(10)]

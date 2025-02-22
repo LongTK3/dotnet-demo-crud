@@ -1,11 +1,11 @@
 using UserManagementAPI.Models;
 
-namespace UserManagementAPI.Repositories
+namespace UserManagementAPI.Services
 {
-    public interface IUserRepository
+    public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsers();
-        Task<User?> GetUserById(int id);
+        Task<IEnumerable<UserDto>> GetAllUsers();
+        Task<UserDto?> GetUserById(int id);
         Task<User> AddUser(User user);
         Task<User?> UpdateUser(int id, User user);
         Task<bool> DeleteUser(int id);
