@@ -102,13 +102,13 @@ namespace UserManagementAPI.Controllers
                 var result = await _userService.DeleteUser(id);
                 if (!result)
                 {
-                    return NotFound($"Không tìm thấy người dùng với ID {id}");
+                    return NotFound($"No user found with ID {id}");
                 }
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi server: " + ex.Message });
+                return StatusCode(500, new { message = "Error server: " + ex.Message });
             }
         }
     }
