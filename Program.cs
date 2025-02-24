@@ -10,7 +10,7 @@ using UserManagementAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
-
+var connectionStrings = builder.Configuration.GetConnectionString("DefaultConnection")??throw new InvalidOperationException("Default connection string is missing");
 if (allowedOrigins == null || allowedOrigins.Length == 0)
 {
     allowedOrigins = ["http://localhost:4200"];
@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionStrings));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -38,6 +38,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+// Apply migrations only in development
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 // 🔹 Middleware for Swagger
 if (app.Environment.IsDevelopment())
 {
