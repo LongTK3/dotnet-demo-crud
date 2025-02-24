@@ -1,3 +1,4 @@
+using UserManagementAPI.Dtos;
 using UserManagementAPI.Models;
 
 namespace UserManagementAPI.Services

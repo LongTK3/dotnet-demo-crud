@@ -1,31 +1,21 @@
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using UserManagementAPI.Dtos;
 using UserManagementAPI.Models;
 using UserManagementAPI.Services;
-using System;
 
-namespace UserManagementAPI.Controllers
+namespace UserManagementAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        public UserController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
             try
             {
-                var users = await _userService.GetAllUsers();
-                if (users == null)
-                {
-                    return NotFound("No data avaiable for User");
-                }
+                var users = await userService.GetAllUsers();
                 return Ok(users);
             }
             catch (Exception ex)
@@ -34,12 +24,12 @@ namespace UserManagementAPI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
             try
             {
-                var user = await _userService.GetUserById(id);
+                var user = await userService.GetUserById(id);
                 if (user == null)
                 {
                     return NotFound($"No user found with ID {id}");
@@ -53,7 +43,7 @@ namespace UserManagementAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -62,7 +52,8 @@ namespace UserManagementAPI.Controllers
 
             try
             {
-                var createdUser = await _userService.AddUser(user);
+                var user = userDto.Adapt<User>();
+                var createdUser = await userService.AddUser(user);
                 return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
             }
             catch (Exception ex)
@@ -71,8 +62,8 @@ namespace UserManagementAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -81,7 +72,8 @@ namespace UserManagementAPI.Controllers
 
             try
             {
-                var updatedUser = await _userService.UpdateUser(id, user);
+                var user = userDto.Adapt<User>();
+                var updatedUser = await userService.UpdateUser(id, user);
                 if (updatedUser == null)
                 {
                     return NotFound($"No user found with ID {id}");
@@ -94,12 +86,12 @@ namespace UserManagementAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                var result = await _userService.DeleteUser(id);
+                var result = await userService.DeleteUser(id);
                 if (!result)
                 {
                     return NotFound($"No user found with ID {id}");

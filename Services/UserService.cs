@@ -1,18 +1,13 @@
+using UserManagementAPI.Dtos;
 using UserManagementAPI.Models;
-using UserManagementAPI.UnitOfWork;
+using UserManagementAPI.Repositories;
+using UserManagementAPI.Repositories.Common.UnitOfWork;
 
 namespace UserManagementAPI.Services
 {
-    public class UserService : IUserService
+    public class UserService(IUnitOfWork unitOfWork) : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public UserService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
-        private UserDto MapToUserDto(User user)
+        private static UserDto MapToUserDto(User user)
         {
             return new UserDto
             {
@@ -28,26 +23,26 @@ namespace UserManagementAPI.Services
 
         public async Task<IEnumerable<UserDto>> GetAllUsers()
         {
-            var users = await _unitOfWork.Users.GetAllUsers();
-            return users.Select(u => MapToUserDto(u));
+            var users = await unitOfWork.Users.GetAllUsers();
+            return users.Select(MapToUserDto);
         }
 
         public async Task<UserDto?> GetUserById(int id)
         {
-            var user = await _unitOfWork.Users.GetUserById(id);
+            var user = await unitOfWork.Users.GetUserById(id);
             return user == null ? null : MapToUserDto(user);
         }
 
         public async Task<User> AddUser(User user)
         {
-            await _unitOfWork.Users.AddUser(user);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.Users.AddUser(user);
+            await unitOfWork.SaveChangesAsync();
             return user;
         }
 
         public async Task<User?> UpdateUser(int id, User user)
         {
-            var existingUser = await _unitOfWork.Users.GetUserById(id);
+            var existingUser = await unitOfWork.Users.GetUserById(id);
             if (existingUser == null) return null;
 
             existingUser.FirstName = user.FirstName;
@@ -56,18 +51,18 @@ namespace UserManagementAPI.Services
             existingUser.PhoneNumber = user.PhoneNumber;
             existingUser.ZipCode = user.ZipCode;
 
-            _unitOfWork.Users.UpdateUser(existingUser);
-            await _unitOfWork.SaveChangesAsync();
+            unitOfWork.Users.UpdateUser(existingUser);
+            await unitOfWork.SaveChangesAsync();
             return existingUser;
         }
 
         public async Task<bool> DeleteUser(int id)
         {
-            var user = await _unitOfWork.Users.GetUserById(id);
+            var user = await unitOfWork.Users.GetUserById(id);
             if (user == null) return false;
 
-            _unitOfWork.Users.DeleteUser(user);
-            return await _unitOfWork.SaveChangesAsync() > 0;
+            unitOfWork.Users.DeleteUser(user);
+            return await unitOfWork.SaveChangesAsync() > 0;
         }
     }
 }

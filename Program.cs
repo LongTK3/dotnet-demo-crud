@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using UserManagementAPI.Data;
+using UserManagementAPI.Middleware;
 using UserManagementAPI.Repositories;
+using UserManagementAPI.Repositories.Common.UnitOfWork;
+using UserManagementAPI.Repositories.Interfaces;
 using UserManagementAPI.Services;
-using UserManagementAPI.UnitOfWork;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,7 @@ var allowedOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<
 
 if (allowedOrigins == null || allowedOrigins.Length == 0)
 {
-    allowedOrigins = new string[] { "http://localhost:4200" };
+    allowedOrigins = ["http://localhost:4200"];
 }
 
 builder.Services.AddCors(options =>
@@ -27,7 +29,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppDBContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -42,6 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 app.UseCors("AllowConfiguredOrigins");
 

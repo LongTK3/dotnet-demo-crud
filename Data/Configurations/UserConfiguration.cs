@@ -11,7 +11,7 @@ namespace UserManagementAPI.Data.Configurations
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
-                   .ValueGeneratedOnAdd(); // Tự động tăng Id
+                   .ValueGeneratedOnAdd(); // Auto increment user id
 
             builder.Property(u => u.FirstName)
                    .IsRequired()
@@ -31,15 +31,6 @@ namespace UserManagementAPI.Data.Configurations
             builder.Property(u => u.ZipCode)
                    .HasMaxLength(10);
 
-            builder.HasData(new User
-            {
-                Id = 1,
-                FirstName = "John",
-                LastName = "Doe",
-                Email = "john.doe@example.com",
-                PhoneNumber = "1234567890",
-                ZipCode = "10001"
-            });
         }
     }
 }
