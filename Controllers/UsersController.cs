@@ -6,7 +6,7 @@ using UserManagementAPI.Services;
 
 namespace UserManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController(IUserService userService) : ControllerBase
     {
