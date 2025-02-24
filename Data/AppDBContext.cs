@@ -1,13 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using UserManagementAPI.Data.SeedData;
 using UserManagementAPI.Models;
 
 namespace UserManagementAPI.Data
 {
-    public class AppDBContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
-
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -15,6 +14,8 @@ namespace UserManagementAPI.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            
+            modelBuilder.Seed();
         }
     }
 }

@@ -10,7 +10,7 @@ using UserManagementAPI.Data;
 
 namespace UserManagementAPI.Migrations
 {
-    [DbContext(typeof(AppDBContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250221151106_SeedUsersData")]
     partial class SeedUsersData
     {
