@@ -4,7 +4,7 @@ using UserManagementAPI.Dtos;
 using UserManagementAPI.Models;
 using UserManagementAPI.Services;
 
-namespace UserManagementAPI.Controller
+namespace UserManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
